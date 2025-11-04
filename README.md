@@ -1,80 +1,144 @@
-# GeoFilm
+## GeoFilm: Film Location Explorer
 
-GeoFilm is a Spring Boot application developed as a small project during a 2-weeks in our internship by a team of colleagues. The platform allows users to explore filming locations from movies and TV shows around the world, integrating with external APIs to fetch movie data and using web scraping to extract filming location information <cite />.
+GeoFilm is a web application developed with [Spring Boot](https://spring.io/projects/spring-boot), designed to help users discover and explore real-world locations where iconic scenes from movies and television series were filmed. The project showcases advanced backend technologies, external data integrations, and modern development practices in a layered, modular architecture.
 
-## Project Context
+### Project Purpose
 
-This project was completed in just 2 weeks during an internship program, showcasing rapid development capabilities and collaborative teamwork <cite />. The development team consisted of multiple contributors including monstahcode, IvanR05, and Grifo999, as evidenced by the git commit history.
+This project began as a demonstration during an intensive two-week internship, aiming to answer a common question for cinema fans and travelers: *Where was my favorite movie scene filmed?* GeoFilm lets users search for films and TV shows, identify filming locations, and save favorite places for future reference. The result is a robust tool with valuable features for cinephiles, travelers, and developers interested in location-based data.
 
-## Features
+---
 
-- **Movie Search**: Search for movies and TV shows using the OMDb API
-- **Location Discovery**: Automatically scrape filming locations from IMDb using Selenium WebDriver <cite />
-- **Geocoding**: Convert location addresses to coordinates using DistanceMatrix AI API
-- **User Favorites**: Save and manage favorite filming locations through many-to-many relationships 
-- **RESTful API**: Complete REST API for frontend integration 
+## Technologies & Architecture
 
-## Technology Stack
+- **Framework:** Spring Boot 3.5.0 (Java 17)
+- **Database:** MySQL using Hibernate/JPA for object-relational mapping
+- **Web Scraping & HTML Parsing:** Selenium WebDriver (Firefox), Jsoup
+- **External Integrations:**
+  - *OMDb API*: Retrieves detailed film information
+  - *IMDb Web Scraping*: Automated extraction of filming locations with Selenium
+  - *DistanceMatrix AI*: Geocoding service for converting addresses to geographical coordinates (latitude/longitude)
+- **Security:** Spring Security and BCrypt password encryption
+- **Layered Architecture:** Clear separation of concerns among business logic, data access, entities, controllers, and data transfer objects
 
-- **Framework**: Spring Boot 3.5.0 
-- **Language**: Java 17 
-- **Database**: MySQL with JPA/Hibernate 
-- **Web Scraping**: Selenium WebDriver with Firefox 
-- **HTML Parsing**: Jsoup
-- **Security**: Spring Security 
+---
 
-## Getting Started
+## Core Features
 
-### Prerequisites
+### 1. Film & TV Show Search
 
-- Java 17 or higher
+Users can search movies and TV shows by name or IMDb ID. The backend queries the public [OMDb API](https://www.omdbapi.com/) to obtain metadata such as title, poster, synopsis, main cast, release year, etc.
+
+### 2. Automatic Location Discovery
+
+GeoFilm employs Selenium WebDriver and web scraping to visit IMDb pages and extract filming locations. Locations may include real or fictional addresses and are encapsulated in `MediaLocation` objects.
+
+#### Example Flow:
+- User searches for "Inception."
+- The backend contacts IMDb and identifies shooting locations like "Paris, France" or "Los Angeles, California, USA."
+- These locations are stored and returned with the movie information.
+
+### 3. Geocoding (Getting Coordinates)
+
+After extracting locations, the application sends them to DistanceMatrix AI to obtain their geocoordinates:
+- Each address is queried, and latitude/longitude are saved.
+- If a location cannot be resolved, null is returned and an error is logged.
+
+This enables visualization on maps or as points of geographic interest.
+
+### 4. User & Favorites Management
+
+Users can register, log in, and save favorite filming locations to their profiles:
+- Many-to-many relationships link users and locations.
+- Favorites can be queried, deleted, or added via dedicated API endpoints.
+
+Authentication is secured using Spring Security and bcrypt password hashing.
+
+### 5. RESTful API
+
+GeoFilm provides a comprehensive REST API, ready for integration with modern frontends (Angular, React, etc). Example endpoints:
+- **POST /api/v1/media/search/name:** Search for films by name
+- **POST /api/v1/media/search/id:** Search by IMDb ID
+- **POST /api/v1/media/search/predict/name:** Get keyword predictions
+- **GET/POST /api/v1/profile/favlocs/list:** Retrieve the authenticated user’s favorite locations
+
+---
+
+## Detailed Architecture
+
+- **JPA Entities:** Represent users and locations, supporting complex relationships and efficient SQL management
+- **Media Objects:** Encapsulate movies, episodes, or programs including their discovered locations and cast data
+- **Service Layer:** Handles business logic (search, authentication, location management)
+- **REST Controllers:** Accept external requests, validate input, and return structured responses
+- **Spring Data JPA Repositories:** Abstract database operations, minimizing manual SQL coding
+
+Each component interacts in a layered manner, promoting maintainability and scalability.
+
+---
+
+## External Integrations & Data Flow
+
+1. **OMDb API:**
+   - Fetches movie ID, title, poster, and synopsis
+   - JSON responses are parsed into internal Media objects
+
+2. **IMDb Web Scraping (Selenium + Jsoup):**
+   - Navigates to IMDb filming location pages
+   - Dynamically extracts addresses using automation and HTML parsing
+
+3. **DistanceMatrix AI (Geocoding):**
+   - Sends addresses and receives geocoordinate data via HTTP requests
+   - Coordinates are stored in MediaLocation objects
+
+---
+
+## Example Usage
+
+1. User searches for a movie via the frontend.
+2. The backend queries OMDb for relevant details.
+3. GeoFilm scrapes IMDb for all filming locations.
+4. Each address is geocoded and linked to the movie.
+5. The user can view, save, or delete locations as favorites.
+6. All relevant data (users, favorites, locations) is managed via secure, well-documented API endpoints.
+
+---
+
+## Error Handling & Security
+
+- All relevant exceptions are caught and managed, ensuring the user receives informative responses (user not found, invalid credentials, external integration errors, invalid data, etc).
+- Passwords are securely stored and never exposed in plaintext.
+- The system replies with user-friendly messages for any errors or external API problems.
+
+---
+
+## Contributors
+
+GeoFilm was collaboratively developed by [monstahcode](https://github.com/monstahcode), [IvanR05](https://github.com/IvanR05), and [Grifo999](https://github.com/Grifo999) over two weeks. The team successfully integrated web scraping, advanced data management, secure authentication, and a maintainable API suitable for future growth.
+
+---
+
+## Setup & Getting Started
+
+**Prerequisites:**
+- Java 17+
 - Maven 3.6+
-- MySQL database
-- Firefox browser installed
-- GeckoDriver executable
+- Running MySQL database
+- Installed Firefox browser and GeckoDriver
 
-### Installation
-
+**Setup Steps:**
 1. Clone the repository
-2. Configure your MySQL database connection in `application.properties`
-3. Ensure Firefox and GeckoDriver are properly installed
-4. Run the application:
+2. Configure your MySQL connection in `application.properties`
+3. Install GeckoDriver and ensure Firefox is operational
+4. Run:
+   ```bash
+   mvn spring-boot:run
+   ```
 
-```bash
-mvn spring-boot:run
-```
+---
 
-## API Endpoints
+## Extra Notes
 
-### Movie Search
-- `POST /api/v1/media/search/name` - Search for movies by name  
-- `POST /api/v1/media/search/predict/name` - Get search predictions 
-- `POST /api/v1/media/search/id` - Search by IMDb ID 
+GeoFilm exemplifies how powerful, extensible software can be created rapidly through teamwork and modern technology. Utilizing web scraping, API integration, and secure development practices in Java, it serves as an ideal reference for developers interested in location-based entertainment applications.
 
-## Architecture
+---
 
-The application follows a layered architecture with clear separation of concerns:
-
-- **Entities**: JPA entities for `User` and `Location` with many-to-many relationships 
-- **Media Objects**: Transient objects for external API data (`Media`, `MediaLocation`) <cite />
-- **Services**: Business logic layer for search and location management
-- **Controllers**: REST API endpoints with CORS support
-- **Repositories**: Data access layer using Spring Data JPA  
-
-## External Integrations
-
-- **OMDb API**: Movie metadata retrieval
-- **IMDb Web Scraping**: Filming location extraction using Selenium <cite />
-- **DistanceMatrix AI**: Geocoding services for coordinate resolution 
-
-## Development Timeline
-
-This project demonstrates what can be accomplished in a short timeframe with focused collaboration <cite />. The rapid development cycle included implementing complex features like web scraping, API integration, and database management within the 2-week internship period <cite />.
-
-## Contributing
-
-This internship project was collaboratively developed by monstahcode, IvanR05, and Grifo999. The codebase demonstrates effective teamwork and follows established Spring Boot conventions <cite />.
-
-## Notes
-
-The project showcases the capabilities of a small development team working under tight deadlines. Despite the 2-week timeframe, the application includes sophisticated features like web scraping with Selenium, external API integrations, and a complete REST API architecture. The Spanish description in the POM file indicates this was likely developed in a Spanish-speaking environment: "Plataforma que permite explorar lugares del mundo donde se filmaron escenas icónicas de películas y series."
+Questions, feedback, or contributions? Feel free to review the code, open issues, or join future development!
