@@ -112,7 +112,7 @@ Each component interacts in a layered manner, promoting maintainability and scal
 
 ## Contributors
 
-GeoFilm was collaboratively developed by [monstahcode](https://github.com/monstahcode), [IvanR05](https://github.com/IvanR05),  [Grifo999](https://github.com/Grifo999) , and and [Croack28](https://github.com/Croack28) over two weeks. The team successfully integrated web scraping, advanced data management, secure authentication, and a maintainable API suitable for future growth.
+GeoFilm was collaboratively developed by [monstahcode](https://github.com/monstahcode), [IvanR05](https://github.com/IvanR05),  [Grifo999](https://github.com/Grifo999) , and [Croack28](https://github.com/Croack28) over two weeks. The team successfully integrated web scraping, advanced data management, secure authentication, and a maintainable API suitable for future growth.
 
 ---
 
